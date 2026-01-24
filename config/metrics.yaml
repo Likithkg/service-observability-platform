@@ -1,0 +1,52 @@
+aws:
+  ec2:
+    cpu_utilization:
+      namespace: AWS/EC2
+      metric_name: CPUUtilization
+      statistic: Average
+      period: 300
+
+    cpu_max:
+      namespace: AWS/EC2
+      metric_name: CPUUtilization
+      statistic: Maximum
+      period: 300
+
+    network_in_bytes:
+      namespace: AWS/EC2
+      metric_name: NetworkIn
+      statistic: Sum
+      period: 300
+
+    network_out_bytes:
+      namespace: AWS/EC2
+      metric_name: NetworkOut
+      statistic: Sum
+      period: 300
+
+    status_failed_system:
+      namespace: AWS/EC2
+      metric_name: StatusCheckFailed_System
+      statistic: Maximum
+      period: 300
+
+    cpu_credit_balance:
+      namespace: AWS/EC2
+      metric_name: CPUCreditBalance
+      statistic: Average
+      period: 300
+
+  cwagent:
+    memory_used_percent:
+      namespace: CWAgent
+      metric_name: mem_used_percent
+      statistic: Average
+      period: 300
+      requires_agent: true
+
+    disk_used_percent:
+      namespace: CWAgent
+      metric_name: disk_used_percent
+      statistic: Average
+      period: 300
+      requires_agent: true
