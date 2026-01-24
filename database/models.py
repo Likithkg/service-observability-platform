@@ -4,10 +4,12 @@ from sqlalchemy import Column, String, DateTime, Boolean, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
 
-from database.database import Base
+from database.base import Base
 
 class User(Base):
-    __tabalename__ = "users"
+    __tablename__ = "users"
+    __table_args__ = {'schema': 'observability'}
+
     id = Column(
         UUID(as_uuid=True),
         primary_key=True,
@@ -31,6 +33,7 @@ class User(Base):
 
 class Application(Base):
     __tablename__ = "applications"
+    __table_args__ = {'schema': 'observability'}
 
     id = Column(
         UUID(as_uuid=True),
@@ -41,7 +44,7 @@ class Application(Base):
 
     user_id = Column(
         UUID(as_uuid=True),
-        ForeignKey("users.id", ondelete="CASCADE"),
+        ForeignKey("observability.users.id", ondelete="CASCADE"),
         nullable=False,
         index=True
     )

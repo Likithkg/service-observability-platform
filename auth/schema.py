@@ -1,23 +1,22 @@
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, ConfigDict
 from uuid import UUID
+from datetime import datetime
 
 class UserCreate(BaseModel):
-    """Schema for user registration request"""
-
     email: EmailStr
-    password: str = Field(min_length=8)
+    password: str  # Make sure this is "password" not "psswrd"
 
 class UserLogin(BaseModel):
-    """Schema for user login"""
-
     email: EmailStr
-    password: str
+    password: str  # Make sure this is "password" not "psswrd"
 
 class TokenRes(BaseModel):
-    """Schema for JWT Token response"""
+    access_token: str
+    token_type: str
 
+class UserRes(BaseModel):
     id: UUID
-    email: EmailStr
-
-    class Config:
-        orm_mode = True
+    email: str
+    created_at: datetime
+    
+    model_config = ConfigDict(from_attributes=True)

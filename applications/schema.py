@@ -30,4 +30,4 @@ class ApplicationRes(BaseModel):
     is_active: bool
 
     class Config:
-        orm_mode = True
+        from_attributes = True

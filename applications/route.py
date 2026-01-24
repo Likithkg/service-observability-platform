@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends, status
 from sqlalchemy.orm import Session
 from uuid import UUID
+from typing import List
 
 from auth.dependency import get_current_user
 from database.database import get_db
@@ -28,7 +29,7 @@ def create_app(
     )
     return application
 
-@router.get("", response_model=[ApplicationRes])
+@router.get("", response_model=List[ApplicationRes])
 def list_app(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
