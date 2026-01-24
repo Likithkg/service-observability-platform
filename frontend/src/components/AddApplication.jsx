@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Cloud, Server, MapPin, Database, Tag } from 'lucide-react';
+import { Cloud, Server, MapPin, Database, Tag, Key } from 'lucide-react';
 import { applicationsAPI } from '../services/api';
 import Navbar from './Navbar';
 
@@ -9,15 +9,19 @@ const AddApplication = ({ onSuccess, onBack, onLogout }) => {
     collector_type: 'cloud',
     cloud: '',
     region: '',
-    instance_id: ''
+    instance_id: '',
+    aws_access_key_id: '',
+    aws_secret_access_key: ''
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showSecretKey, setShowSecretKey] = useState(false);
+  const [showAdvanced, setShowAdvanced] = useState(false);
 
   const handleSubmit = async () => {
     // Validate required fields
     if (!formData.name || !formData.collector_type || !formData.cloud || !formData.region || !formData.instance_id) {
-      setError('Please fill in all fields');
+      setError('Please fill in all required fields');
       return;
     }
 
@@ -31,7 +35,9 @@ const AddApplication = ({ onSuccess, onBack, onLogout }) => {
         collector_type: 'cloud',
         cloud: '', 
         region: '', 
-        instance_id: '' 
+        instance_id: '',
+        aws_access_key_id: '',
+        aws_secret_access_key: ''
       });
       onSuccess();
     } catch (err) {
@@ -73,7 +79,7 @@ const AddApplication = ({ onSuccess, onBack, onLogout }) => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <Tag size={16} className="inline mr-2" />
-                Application Name
+                Application Name *
               </label>
               <input
                 type="text"
@@ -88,7 +94,7 @@ const AddApplication = ({ onSuccess, onBack, onLogout }) => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <Database size={16} className="inline mr-2" />
-                Collector Type
+                Collector Type *
               </label>
               <select
                 value={formData.collector_type}
@@ -104,7 +110,7 @@ const AddApplication = ({ onSuccess, onBack, onLogout }) => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <Cloud size={16} className="inline mr-2" />
-                Cloud Provider
+                Cloud Provider *
               </label>
               <input
                 type="text"
@@ -119,7 +125,7 @@ const AddApplication = ({ onSuccess, onBack, onLogout }) => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <MapPin size={16} className="inline mr-2" />
-                Region
+                Region *
               </label>
               <input
                 type="text"
@@ -134,7 +140,7 @@ const AddApplication = ({ onSuccess, onBack, onLogout }) => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <Server size={16} className="inline mr-2" />
-                Instance ID
+                Instance ID *
               </label>
               <input
                 type="text"
@@ -144,6 +150,61 @@ const AddApplication = ({ onSuccess, onBack, onLogout }) => {
                 placeholder="i-1234567890abcdef0"
                 required
               />
+            </div>
+
+            {/* Advanced AWS Credentials Section */}
+            <div className="border-t pt-6">
+              <button
+                type="button"
+                onClick={() => setShowAdvanced(!showAdvanced)}
+                className="flex items-center text-indigo-600 hover:text-indigo-700 font-semibold"
+              >
+                <Key size={16} className="mr-2" />
+                {showAdvanced ? 'Hide' : 'Add'} AWS Credentials (Optional)
+              </button>
+
+              {showAdvanced && (
+                <div className="mt-4 p-4 bg-blue-50 rounded-lg space-y-4">
+                  <p className="text-sm text-gray-600">
+                    You can add AWS credentials now or update them later. Credentials will be encrypted and securely stored.
+                  </p>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      AWS Access Key ID
+                    </label>
+                    <input
+                      type="password"
+                      value={formData.aws_access_key_id}
+                      onChange={(e) => setFormData({ ...formData, aws_access_key_id: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition"
+                      placeholder="AKIA..."
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      AWS Secret Access Key
+                    </label>
+                    <div className="relative">
+                      <input
+                        type={showSecretKey ? 'text' : 'password'}
+                        value={formData.aws_secret_access_key}
+                        onChange={(e) => setFormData({ ...formData, aws_secret_access_key: e.target.value })}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition pr-10"
+                        placeholder="Enter your secret access key"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowSecretKey(!showSecretKey)}
+                        className="absolute right-3 top-2 text-gray-600 hover:text-gray-800"
+                      >
+                        {showSecretKey ? '👁️' : '👁️‍🗨️'}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             <button

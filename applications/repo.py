@@ -2,7 +2,8 @@ from sqlalchemy.orm import Session
 from uuid import UUID
 
 from database.models import Application
-from applications.schema import ApplicationsCreate
+from applications.schema import ApplicationsCreate, AwsCredentialsUpdate
+from helper.encryption import encrypt_value
 
 
 def create_application(
@@ -14,6 +15,15 @@ def create_application(
     """
     Create new application by the user.
     """
+    # Encrypt AWS credentials if provided
+    aws_access_key = None
+    aws_secret_key = None
+    
+    if app_in.aws_access_key_id:
+        aws_access_key = encrypt_value(app_in.aws_access_key_id)
+    if app_in.aws_secret_access_key:
+        aws_secret_key = encrypt_value(app_in.aws_secret_access_key)
+    
     application = Application(
         user_id=user_id,
         name=app_in.name,
@@ -21,6 +31,8 @@ def create_application(
         cloud=app_in.cloud,
         region=app_in.region,
         instance_id=app_in.instance_id,
+        aws_access_key_id=aws_access_key,
+        aws_secret_access_key=aws_secret_key,
         is_active=True
     )
 
@@ -30,7 +42,6 @@ def create_application(
     return application
 
 
-# Rest of the functions remain the same
 def get_application_by_user(
         db: Session,
         *,
@@ -95,3 +106,35 @@ def soft_delete_application(
     application.is_active = False
     db.commit()
     return True
+
+
+def update_aws_credentials(
+        db: Session,
+        *,
+        app_id: UUID,
+        user_id: UUID,
+        creds_in: AwsCredentialsUpdate
+) -> Application | None:
+    """
+    Update AWS credentials for an application.
+    Credentials are encrypted before storing.
+    """
+    application = (
+        db.query(Application)
+        .filter(
+            Application.id == app_id,
+            Application.user_id == user_id,
+            Application.is_active.is_(True)
+        )
+        .first()
+    )
+
+    if not application:
+        return None
+    
+    application.aws_access_key_id = encrypt_value(creds_in.aws_access_key_id)
+    application.aws_secret_access_key = encrypt_value(creds_in.aws_secret_access_key)
+    
+    db.commit()
+    db.refresh(application)
+    return application
