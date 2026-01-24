@@ -1,6 +1,6 @@
 import time
 from datetime import datetime, timezone
-from metrics.aws_collector import collect_ec2_metrics
+from metrics.aws import collect_ec2_metrics
 
 # Store metrics per instance
 LATEST_METRICS = {}
