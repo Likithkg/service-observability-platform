@@ -11,6 +11,7 @@ function App() {
   const [token, setToken] = useState(localStorage.getItem('token') || null);
   const [applications, setApplications] = useState([]);
   const [selectedApp, setSelectedApp] = useState(null);
+  const [isDarkTheme, setIsDarkTheme] = useState(localStorage.getItem('theme') === 'dark');
 
   useEffect(() => {
     if (token) {
@@ -45,9 +46,24 @@ function App() {
     setCurrentPage('home');
   };
 
+  const handleDeleteApp = async (appId) => {
+    try {
+      await applicationsAPI.delete(appId);
+      await fetchApplications();
+    } catch (err) {
+      console.error('Error deleting application:', err);
+      alert('Failed to delete application');
+    }
+  };
+
   const handleViewMetrics = (app) => {
     setSelectedApp(app);
     setCurrentPage('metrics');
+  };
+
+  const handleToggleTheme = () => {
+    setIsDarkTheme(!isDarkTheme);
+    localStorage.setItem('theme', !isDarkTheme ? 'dark' : 'light');
   };
 
   if (currentPage === 'login') {
@@ -55,6 +71,7 @@ function App() {
       <Login
         onSuccess={handleLoginSuccess}
         onSwitchToRegister={() => setCurrentPage('register')}
+        isDarkTheme={isDarkTheme}
       />
     );
   }
@@ -64,6 +81,7 @@ function App() {
       <Register
         onSuccess={handleLoginSuccess}
         onSwitchToLogin={() => setCurrentPage('login')}
+        isDarkTheme={isDarkTheme}
       />
     );
   }
@@ -74,6 +92,7 @@ function App() {
         onSuccess={handleAddAppSuccess}
         onBack={() => setCurrentPage('home')}
         onLogout={handleLogout}
+        isDarkTheme={isDarkTheme}
       />
     );
   }
@@ -84,6 +103,7 @@ function App() {
         application={selectedApp}
         onBack={() => setCurrentPage('home')}
         onLogout={handleLogout}
+        isDarkTheme={isDarkTheme}
       />
     );
   }
@@ -93,11 +113,12 @@ function App() {
       applications={applications}
       onAddApp={() => setCurrentPage('addApp')}
       onViewMetrics={handleViewMetrics}
+      onDeleteApp={handleDeleteApp}
       onLogout={handleLogout}
+      isDarkTheme={isDarkTheme}
+      onToggleTheme={handleToggleTheme}
     />
   );
 }
 
 export default App;
-
-// VITE_API_URL=http://localhost:8000

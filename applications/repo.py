@@ -30,7 +30,6 @@ def create_application(
     return application
 
 
-# Rest of the functions remain the same
 def get_application_by_user(
         db: Session,
         *,

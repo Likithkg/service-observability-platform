@@ -83,6 +83,22 @@ export const applicationsAPI = {
       throw new Error('Failed to delete application');
     }
     
+    // 204 No Content returns empty body, so only parse JSON if there's content
+    if (response.status === 204) {
+      return { success: true };
+    }
+    
+    return response.json();
+  }
+};
+
+
+export const metricsAPI = {
+  getLatest: async (appId) => {
+    const response = await fetch(`${API_BASE}/metrics/${appId}`, {
+      method: 'GET',
+      headers: getAuthHeaders()
+    });
     return response.json();
   }
 };
