@@ -54,15 +54,9 @@ class Application(Base):
         nullable=False
     )
 
-    endpoint = Column(
-        String,
-        nullable=False
-    )
-
     collector_type = Column(
         String,
-        nullable=False,
-        default="http"
+        nullable=False
     )
 
     cloud = Column(
@@ -77,12 +71,7 @@ class Application(Base):
 
     instance_id = Column(
         String,
-        nullable=True
-    )
-
-    bucket = Column(
-        String,
-        nullable=True
+        nullable=False
     )
 
     is_active = Column(
