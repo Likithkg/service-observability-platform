@@ -6,12 +6,13 @@ from typing import List
 from auth.dependency import get_current_user
 from database.database import get_db
 from database.models import User
-from applications.schema import ApplicationRes, ApplicationsCreate
+from applications.schema import ApplicationRes, ApplicationsCreate, AwsCredentialsUpdate
 from applications.repo import (
     create_application,
     get_application_by_id,
     get_application_by_user,
-    soft_delete_application
+    soft_delete_application,
+    update_aws_credentials
 )
 
 router = APIRouter()
@@ -77,3 +78,26 @@ def delete_app(
             details="Application not found"
         )
     return None
+
+
+@router.put("/{app_id}/aws-credentials", response_model=ApplicationRes)
+def update_app_credentials(
+    app_id: UUID,
+    creds_in: AwsCredentialsUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Update AWS credentials for an application"""
+    application = update_aws_credentials(
+        db,
+        app_id=app_id,
+        user_id=current_user.id,
+        creds_in=creds_in
+    )
+
+    if not application:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Application not found"
+        )
+    return application

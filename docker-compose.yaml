@@ -1,0 +1,64 @@
+services:
+  observability-db:
+    image: postgres:15
+    container_name: observability-db
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_USER: observability
+      POSTGRES_PASSWORD: observability
+      POSTGRES_DB: observability
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U observability"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  observability-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: observability-api
+    restart: unless-stopped
+
+    depends_on:
+      observability-db:
+        condition: service_healthy
+
+    environment:
+      DATA_BASE_URL: postgresql+psycopg2://observability:observability@observability-db:5432/observability
+      SECRET_KEY: super-secret-key
+      ALGORITHM: HS256
+      JWT_EXPIRATION_HOURS: "24"
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
+
+    ports:
+      - "8000:8000"
+
+    volumes:
+      - ./.env:/.env:ro
+
+  observability-frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.frontend
+
+    container_name: observability-frontend
+    restart: unless-stopped
+
+    environment:
+      VITE_API_BASE: http://observability-api:8000
+
+    ports:
+      - "3000:3000"
+
+    depends_on:
+      - observability-api
+
+volumes:
+  postgres_data:

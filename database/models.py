@@ -80,6 +80,16 @@ class Application(Base):
         nullable=False
     )
 
+    aws_access_key_id = Column(
+        String,
+        nullable=True
+    )
+
+    aws_secret_access_key = Column(
+        String,
+        nullable=True
+    )
+
     created_at = Column(
         DateTime(timezone=True),
         server_default=func.now()

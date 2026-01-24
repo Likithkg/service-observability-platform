@@ -89,7 +89,21 @@ export const applicationsAPI = {
     }
     
     return response.json();
-  }
+  },
+
+  updateAwsCredentials: async (appId, credentials) => {
+    const response = await fetch(`${API_BASE}/applications/${appId}/aws-credentials`, {
+      method: 'PUT',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(credentials)
+    });
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.detail || 'Failed to update AWS credentials');
+    }
+    
+    return response.json();  }
 };
 
 

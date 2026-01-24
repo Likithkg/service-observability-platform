@@ -1,9 +1,16 @@
 from datetime import datetime, timezone
+from typing import Optional
 from helper.yamlLoader import load_metrics_config
 from metrics.aws_fetcher import fetch_metric
 
 
-def collect_ec2_metrics(instance_id: str, region: str, agent_installed: bool = False):
+def collect_ec2_metrics(
+    instance_id: str, 
+    region: str, 
+    agent_installed: bool = False,
+    aws_access_key_id: Optional[str] = None,
+    aws_secret_access_key: Optional[str] = None
+):
     config = load_metrics_config()
     aws_config = config["aws"]
 
@@ -24,6 +31,8 @@ def collect_ec2_metrics(instance_id: str, region: str, agent_installed: bool = F
             statistic=metric_def["statistic"],
             dimensions=dimensions,
             period=metric_def["period"],
+            aws_access_key_id=aws_access_key_id,
+            aws_secret_access_key=aws_secret_access_key
         )
 
         results[metric_key] = value
@@ -52,6 +61,8 @@ def collect_ec2_metrics(instance_id: str, region: str, agent_installed: bool = F
             statistic=metric_def["statistic"],
             dimensions=dimensions,
             period=metric_def["period"],
+            aws_access_key_id=aws_access_key_id,
+            aws_secret_access_key=aws_secret_access_key
         )
 
         results[metric_key] = value

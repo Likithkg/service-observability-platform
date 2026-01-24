@@ -1,14 +1,18 @@
-import React from 'react';
-import { Cloud, Server, MapPin, Activity, Plus, Trash2, Moon, Sun } from 'lucide-react';
+import React, { useState } from 'react';
+import { Cloud, Server, MapPin, Activity, Plus, Trash2, Moon, Sun, Key } from 'lucide-react';
 import Navbar from './Navbar';
+import AwsCredentialsForm from './AwsCredentialsForm';
 
 const Dashboard = ({ applications, onAddApp, onViewMetrics, onDeleteApp, onLogout, isDarkTheme, onToggleTheme }) => {
+  const [selectedAppForCreds, setSelectedAppForCreds] = useState(null);
+
   const handleDelete = (e, appId) => {
     e.stopPropagation();
     if (window.confirm('Are you sure you want to delete this application?')) {
       onDeleteApp(appId);
     }
   };
+
   return (
     <div className={`min-h-screen ${isDarkTheme ? 'bg-gray-900' : 'bg-gradient-to-br from-blue-50 to-indigo-100'}`}>
       <Navbar onAddApp={onAddApp} onLogout={onLogout} isDarkTheme={isDarkTheme} />
@@ -55,7 +59,7 @@ const Dashboard = ({ applications, onAddApp, onViewMetrics, onDeleteApp, onLogou
                       <Server className={isDarkTheme ? 'text-indigo-400' : 'text-indigo-600'} size={24} />
                     </div>
                     <div>
-                      <h3 className={`text-lg font-bold ${isDarkTheme ? 'text-white' : 'text-gray-800'}`}>{app.cloud_name}</h3>
+                      <h3 className={`text-lg font-bold ${isDarkTheme ? 'text-white' : 'text-gray-800'}`}>{app.name}</h3>
                       <p className={`text-sm ${isDarkTheme ? 'text-gray-400' : 'text-gray-500'}`}>{app.region}</p>
                     </div>
                   </div>
@@ -80,12 +84,28 @@ const Dashboard = ({ applications, onAddApp, onViewMetrics, onDeleteApp, onLogou
                     <MapPin size={14} className="mr-2" />
                     <span>{app.region}</span>
                   </div>
+                  {app.aws_access_key_id && (
+                    <div className={`flex items-center text-sm ${isDarkTheme ? 'text-green-400' : 'text-green-600'}`}>
+                      <Key size={14} className="mr-2" />
+                      <span>AWS Credentials Configured</span>
+                    </div>
+                  )}
                 </div>
 
-                <div className={`pt-4 border-t ${isDarkTheme ? 'border-gray-700' : 'border-gray-200'}`}>
+                <div className={`pt-4 space-y-2 border-t ${isDarkTheme ? 'border-gray-700' : 'border-gray-200'}`}>
                   <button className={`w-full flex items-center justify-center space-x-2 font-semibold ${isDarkTheme ? 'text-indigo-400 hover:text-indigo-300' : 'text-indigo-600 hover:text-indigo-700'}`}>
                     <Activity size={16} />
                     <span>View Metrics</span>
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedAppForCreds(app);
+                    }}
+                    className={`w-full flex items-center justify-center space-x-2 font-semibold text-sm py-2 rounded transition ${isDarkTheme ? 'text-amber-400 hover:text-amber-300' : 'text-amber-600 hover:text-amber-700'}`}
+                  >
+                    <Key size={14} />
+                    <span>Manage AWS Credentials</span>
                   </button>
                 </div>
               </div>
@@ -93,6 +113,16 @@ const Dashboard = ({ applications, onAddApp, onViewMetrics, onDeleteApp, onLogou
           </div>
         )}
       </div>
+
+      {selectedAppForCreds && (
+        <AwsCredentialsForm
+          applicationId={selectedAppForCreds.id}
+          onSuccess={() => {
+            // Optionally refresh applications list
+          }}
+          onClose={() => setSelectedAppForCreds(null)}
+        />
+      )}
     </div>
   );
 };

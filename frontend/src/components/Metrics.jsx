@@ -39,6 +39,7 @@ const Metrics = ({ application, onBack, onLogout, isDarkTheme }) => {
     try {
       setIsLoading(true);
       const data = await metricsAPI.getLatest(application.id);
+      
       if (data.formatted) {
         setCurrentMetrics(data.formatted);
         
@@ -48,11 +49,17 @@ const Metrics = ({ application, onBack, onLogout, isDarkTheme }) => {
         setMemoryData([{ time: timestamp, value: data.formatted.memory }]);
         setNetworkData([{ time: timestamp, value: data.formatted.network }]);
         setDiskData([{ time: timestamp, value: data.formatted.disk }]);
+        
+        setIsLoading(false);
+      } else if (data.message) {
+        // No metrics available yet, but that's ok - show loading and wait for stream
+        console.log('Waiting for first metrics from poller...');
+        setIsLoading(true);
       }
-      setIsLoading(false);
     } catch (err) {
       console.error('Error fetching initial metrics:', err);
-      setIsLoading(false);
+      // Don't fail completely - still try to connect to stream
+      setIsLoading(true);
     }
   };
 
@@ -137,6 +144,13 @@ const Metrics = ({ application, onBack, onLogout, isDarkTheme }) => {
           <div className={`border text-red-700 px-4 py-3 rounded-lg mb-4 flex items-center ${isDarkTheme ? 'bg-red-900 border-red-700' : 'bg-red-50 border-red-200'}`}>
             <AlertCircle size={20} className="mr-2" />
             {error}
+          </div>
+        )}
+
+        {isLoading && !isConnected && (
+          <div className={`border text-blue-700 px-4 py-3 rounded-lg mb-4 flex items-center ${isDarkTheme ? 'bg-blue-900 border-blue-700' : 'bg-blue-50 border-blue-200'}`}>
+            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-700 mr-2"></div>
+            Loading metrics... This may take a moment while the system collects initial data.
           </div>
         )}
 
