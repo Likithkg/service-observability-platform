@@ -65,9 +65,12 @@ const Metrics = ({ application, onBack, onLogout, isDarkTheme }) => {
 
   const connectToStream = () => {
     const token = localStorage.getItem('token');
-    const eventSource = new EventSource(
-      `http://localhost:8000/metrics/${application.id}/realtime?token=${token}`
-    );
+    const API_BASE = import.meta.env.VITE_API_BASE;
+
+  const eventSource = new EventSource(
+    `${API_BASE}/metrics/${application.id}/realtime?token=${token}`
+  );
+
 
     eventSource.onopen = () => {
       console.log('Connected to metrics stream');
