@@ -10,6 +10,7 @@ class ApplicationsCreate(BaseModel):
     cloud: str = Field(..., description="Cloud provider name")
     region: str = Field(..., description="Cloud region")
     instance_id: str = Field(..., description="Instance identifier")
+    bucket_name: Optional[str] = Field(None, description="Bucket name if applicable")
     aws_access_key_id: Optional[str] = Field(None, description="AWS Access Key ID")
     aws_secret_access_key: Optional[str] = Field(None, description="AWS Secret Access Key")
 
@@ -22,6 +23,7 @@ class ApplicationRes(BaseModel):
     cloud: str
     region: str
     instance_id: str
+    bucket_name: Optional[str] = None
     is_active: bool
     aws_access_key_id: Optional[str] = None
     aws_secret_access_key: Optional[str] = None

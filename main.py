@@ -11,7 +11,7 @@ from database.database import engine
 from database.base import Base
 from auth.route import router as auth_router
 from applications.route import router as application_router
-from metrics.route import router as metrics_router
+from aws_metrics.route import router as metrics_router
 from realtime.aws_poller import start_poller_thread
 
 @asynccontextmanager
