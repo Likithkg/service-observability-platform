@@ -48,7 +48,7 @@ export const authAPI = {
 
 export const applicationsAPI = {
   getAll: async () => {
-    const response = await fetch(`${API_BASE}/applications/`, {
+    const response = await fetch(`${API_BASE}/applications`, {
       headers: getAuthHeaders()
     });
     
@@ -60,7 +60,7 @@ export const applicationsAPI = {
   },
 
   create: async (appData) => {
-    const response = await fetch(`${API_BASE}/applications/`, {
+    const response = await fetch(`${API_BASE}/applications`, {
       method: 'POST',
       headers: getAuthHeaders(),
       body: JSON.stringify(appData)
@@ -74,7 +74,7 @@ export const applicationsAPI = {
   },
 
   delete: async (appId) => {
-    const response = await fetch(`${API_BASE}/applications/${appId}`, {
+    const response = await fetch(`${API_BASE}/applications${appId}`, {
       method: 'DELETE',
       headers: getAuthHeaders()
     });
