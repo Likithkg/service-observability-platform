@@ -39,7 +39,8 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="Cloud Monitor Service",
     version="1.0.0",
-    lifespan=lifespan
+    lifespan=lifespan,
+    redirect_slashes=False
 )
 
 app.add_middleware(
