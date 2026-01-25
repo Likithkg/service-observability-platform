@@ -50,19 +50,3 @@ aws:
       statistic: Average
       period: 300
       requires_agent: true
-  s3:
-    bucket_size_bytes:
-      namespace: AWS/S3
-      metric_name: BucketSizeBytes
-      statistic: Average
-      period: 86400   # once per day (AWS requirement)
-      dimensions:
-        StorageType: StandardStorage
-
-    number_of_objects:
-      namespace: AWS/S3
-      metric_name: NumberOfObjects
-      statistic: Average
-      period: 86400
-      dimensions:
-        StorageType: AllStorageTypes

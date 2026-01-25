@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from typing import Optional
 from helper.yamlLoader import load_metrics_config
-from aws_metrics.aws_fetcher import fetch_metric
+from metrics.aws_fetcher import fetch_metric
 
 
 def collect_ec2_metrics(

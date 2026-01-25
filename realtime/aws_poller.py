@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from sqlalchemy.orm import Session
 from database.database import Session_local
 from database.models import Application
-from aws_metrics.aws import collect_ec2_metrics
+from metrics.aws import collect_ec2_metrics
 from helper.encryption import decrypt_value
 
 LATEST_METRICS = {}

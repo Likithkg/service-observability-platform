@@ -74,12 +74,6 @@ class Application(Base):
         nullable=False
     )
 
-    bucket_name = Column(
-        String,
-        nullable=True
-    )
-
-
     is_active = Column(
         Boolean,
         default=True,

@@ -6,11 +6,10 @@ import Navbar from './Navbar';
 const AddApplication = ({ onSuccess, onBack, onLogout }) => {
   const [formData, setFormData] = useState({
     name: '',
-    cloud: 'aws',
-    collector_type: 'EC2',
+    collector_type: 'cloud',
+    cloud: '',
     region: '',
     instance_id: '',
-    bucket_name: '',
     aws_access_key_id: '',
     aws_secret_access_key: ''
   });
@@ -21,45 +20,22 @@ const AddApplication = ({ onSuccess, onBack, onLogout }) => {
 
   const handleSubmit = async () => {
     // Validate required fields
-    if (!formData.name || !formData.cloud || !formData.collector_type || !formData.region) {
+    if (!formData.name || !formData.collector_type || !formData.cloud || !formData.region || !formData.instance_id) {
       setError('Please fill in all required fields');
-      return;
-    }
-    if (formData.collector_type === 'EC2' && !formData.instance_id) {
-      setError('Please provide the EC2 Instance ID');
-      return;
-    }
-    if (formData.collector_type === 'S3' && !formData.bucket_name) {
-      setError('Please provide the S3 Bucket Name');
       return;
     }
 
     setError('');
     setLoading(true);
 
-    // Prepare payload with only relevant fields
-    let payload = {
-      name: formData.name,
-      cloud: formData.cloud,
-      collector_type: formData.collector_type,
-      region: formData.region,
-      instance_id: formData.instance_id,
-      aws_access_key_id: formData.aws_access_key_id,
-      aws_secret_access_key: formData.aws_secret_access_key
-    };
-    if (formData.collector_type === 'S3') {
-      payload.bucket_name = formData.bucket_name;
-    }
-
     try {
-      await applicationsAPI.create(payload);
-      setFormData({
+      await applicationsAPI.create(formData);
+      setFormData({ 
         name: '',
-        cloud: 'aws',
-        collector_type: 'EC2',
-        region: '',
+        collector_type: 'cloud',
+        cloud: '', 
+        region: '', 
         instance_id: '',
-        bucket_name: '',
         aws_access_key_id: '',
         aws_secret_access_key: ''
       });
@@ -115,53 +91,21 @@ const AddApplication = ({ onSuccess, onBack, onLogout }) => {
               />
             </div>
 
-            {/* Cloud Provider Dropdown */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                <Cloud size={16} className="inline mr-2" />
-                Cloud Provider *
+                <Database size={16} className="inline mr-2" />
+                Collector Type *
               </label>
               <select
-                value={formData.cloud}
-                onChange={e => {
-                  setFormData({
-                    ...formData,
-                    cloud: e.target.value,
-                    collector_type: 'EC2', // reset collector_type on cloud change
-                  });
-                }}
+                value={formData.collector_type}
+                onChange={(e) => setFormData({ ...formData, collector_type: e.target.value })}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition"
               >
-                <option value="aws">AWS</option>
-                {/* Future: <option value="azure">Azure</option> <option value="gcp">GCP</option> */}
+                <option value="cloud">Cloud</option>
+                <option value="http">HTTP</option>
+                <option value="agent">Agent</option>
               </select>
             </div>
-
-            {/* Collector Type Dropdown (only for AWS) */}
-            {formData.cloud === 'aws' && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  <Database size={16} className="inline mr-2" />
-                  AWS Service *
-                </label>
-                <select
-                  value={formData.collector_type}
-                  onChange={e => {
-                    const type = e.target.value;
-                    setFormData(f => ({
-                      ...f,
-                      collector_type: type,
-                      // Clear irrelevant fields when switching type
-                      bucket_name: type === 'S3' ? f.bucket_name : ''
-                    }));
-                  }}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition"
-                >
-                  <option value="EC2">EC2</option>
-                  <option value="S3">S3</option>
-                </select>
-              </div>
-            )}
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -178,8 +122,6 @@ const AddApplication = ({ onSuccess, onBack, onLogout }) => {
               />
             </div>
 
-
-            {/* Region Field (always shown) */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <MapPin size={16} className="inline mr-2" />
@@ -195,7 +137,6 @@ const AddApplication = ({ onSuccess, onBack, onLogout }) => {
               />
             </div>
 
-            {/* Instance ID Field (always shown) */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <Server size={16} className="inline mr-2" />
@@ -206,29 +147,10 @@ const AddApplication = ({ onSuccess, onBack, onLogout }) => {
                 value={formData.instance_id}
                 onChange={(e) => setFormData({ ...formData, instance_id: e.target.value })}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition"
-                placeholder="i-1234567890abcdef0 or leave blank for S3"
-                required={formData.collector_type === 'EC2'}
+                placeholder="i-1234567890abcdef0"
+                required
               />
             </div>
-
-            {/* S3 Fields */}
-            {formData.collector_type === 'S3' && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  <Server size={16} className="inline mr-2" />
-                  S3 Bucket Name *
-                </label>
-                <input
-                  type="text"
-                  value={formData.bucket_name}
-                  onChange={(e) => setFormData({ ...formData, bucket_name: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition"
-                  placeholder="my-bucket-name"
-                  required
-                />
-              </div>
-            )}
-
 
             {/* Advanced AWS Credentials Section */}
             <div className="border-t pt-6">
