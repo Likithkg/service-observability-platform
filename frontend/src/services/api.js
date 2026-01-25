@@ -74,10 +74,11 @@ export const applicationsAPI = {
   },
 
   delete: async (appId) => {
-    const response = await fetch(`${API_BASE}/applications${appId}`, {
+    const response = await fetch(`${API_BASE}/applications/${appId}`, {
       method: 'DELETE',
-      headers: getAuthHeaders()
+      headers: getAuthHeaders(),
     });
+
     
     if (!response.ok) {
       throw new Error('Failed to delete application');
