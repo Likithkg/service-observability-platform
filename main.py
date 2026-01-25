@@ -44,10 +44,14 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # later restrict to Vercel domain
+    allow_origins=[
+        "http://localhost:3000",
+        "https://service-observability-platform.vercel.app",
+    ],
+    allow_origin_regex=r"https://service-observability-platform-.*\.vercel\.app",
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["*"],  # <-- CRITICAL
 )
 
 
