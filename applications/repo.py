@@ -80,32 +80,32 @@ def get_application_by_id(
     )
 
 
-def delete_application(
+def soft_delete_application(
         db: Session,
         *,
         app_id: UUID,
         user_id: UUID
 ) -> bool:
     """
-    Permanently delete an application from the database.
+    Soft delete an application by marking it inactive.
     Returns True if deleted, False if not found.
     """
     application = (
         db.query(Application)
         .filter(
             Application.id == app_id,
-            Application.user_id == user_id
+            Application.user_id == user_id,
+            Application.is_active.is_(True)
         )
         .first()
     )
 
     if not application:
         return False
-
-    db.delete(application)
+    
+    application.is_active = False
     db.commit()
     return True
-
 
 
 def update_aws_credentials(
