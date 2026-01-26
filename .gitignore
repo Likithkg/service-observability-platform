@@ -3,3 +3,4 @@ venv
 __pycache__
 aws_test.py 
 test
+test_aws.py
