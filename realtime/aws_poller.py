@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from database.database import Session_local
 from database.models import Application
 from metrics.aws import collect_ec2_metrics
+from metrics.aws_S3 import collect_S3_metrics
 from helper.encryption import decrypt_value
 
 LATEST_METRICS = {}
@@ -39,22 +40,32 @@ def poll_all_applications():
                                 print(f"[Poller] Failed to decrypt credentials for {app.name}: {decrypt_err}")
                                 continue
                         
-                        metrics = collect_ec2_metrics(
-                            instance_id=app.instance_id,
+                        if app.collector_type.lower() == "ec2":
+                            metrics = collect_ec2_metrics(
+                                instance_id=app.instance_id,
+                                region=app.region,
+                                agent_installed=True,
+                                aws_access_key_id=aws_access_key_id,
+                                aws_secret_access_key=aws_secret_access_key
+                            )
+                        elif app.collector_type.lower() == "s3":
+                            metrics = collect_S3_metrics(
+                            bucket_name=app.bucket_name,
                             region=app.region,
-                            agent_installed=True,
                             aws_access_key_id=aws_access_key_id,
                             aws_secret_access_key=aws_secret_access_key
                         )
-                        
                         metrics["collected_at"] = datetime.now(timezone.utc).isoformat()
                         metrics["application_id"] = str(app.id)
                         metrics["application_name"] = app.name
                         
                         # Store by application ID
                         LATEST_METRICS[str(app.id)] = metrics
-                        print(f"[Poller] Updated metrics for {app.name} ({app.instance_id})")
-                        
+                        if app.collector_type.lower() == "ec2":
+                            print(f"[Poller] Updated metrics for {app.name} ({app.instance_id})")
+                        elif app.collector_type.lower() == "s3":
+                            print(f"[Poller] Updated metrics for {app.name} ({app.bucket_name})")
+
                     except Exception as e:
                         print(f"[Poller] Error for {app.name}: {e}")
                         LATEST_METRICS[str(app.id)] = {

@@ -9,7 +9,8 @@ class ApplicationsCreate(BaseModel):
     collector_type: str = Field(..., description="Type of collector (e.g., 'cloud', 'http')")
     cloud: str = Field(..., description="Cloud provider name")
     region: str = Field(..., description="Cloud region")
-    instance_id: str = Field(..., description="Instance identifier")
+    bucket_name: Optional[str] = Field(None, description="Bucket name for S3 applications")
+    instance_id: str = Field(None, description="Instance identifier")
     aws_access_key_id: Optional[str] = Field(None, description="AWS Access Key ID")
     aws_secret_access_key: Optional[str] = Field(None, description="AWS Secret Access Key")
 
@@ -21,7 +22,8 @@ class ApplicationRes(BaseModel):
     collector_type: str
     cloud: str
     region: str
-    instance_id: str
+    instance_id: Optional[str] = None
+    bucket_name: Optional[str] = None
     is_active: bool
     aws_access_key_id: Optional[str] = None
     aws_secret_access_key: Optional[str] = None

@@ -36,6 +36,21 @@ aws:
       statistic: Average
       period: 300
 
+  s3:
+    bucket_size_bytes:
+      namespace: AWS/S3
+      metric_name: BucketSizeBytes
+      statistic: Average
+      period: 86400
+      storage_type: StandardStorage
+
+    number_of_objects:
+      namespace: AWS/S3
+      metric_name: NumberOfObjects
+      statistic: Average
+      period: 86400
+      storage_type: AllStorageTypes
+
   cwagent:
     memory_used_percent:
       namespace: CWAgent
