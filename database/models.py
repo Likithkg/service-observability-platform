@@ -69,6 +69,11 @@ class Application(Base):
         nullable=False
     )
 
+    bucket_name = Column(
+        String,
+        nullable=True
+    )
+
     instance_id = Column(
         String,
         nullable=False

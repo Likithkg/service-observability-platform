@@ -41,21 +41,32 @@ async def stream_realtime_metrics(
             metrics = LATEST_METRICS.get(str(app_id), {})
             
             if metrics:
-                # Format metrics for frontend
-                formatted = {
-                    "timestamp": metrics.get("collected_at"),
-                    "cpu": metrics.get("cpu_utilization", 0) or 0,
-                    "memory": metrics.get("memory_used_percent", 0) or 0,
-                    "network_in": (metrics.get("network_in_bytes", 0) or 0) / (1024 * 1024),
-                    "network_out": (metrics.get("network_out_bytes", 0) or 0) / (1024 * 1024),
-                    "disk": metrics.get("disk_used_percent", 0) or 0,
-                    "error": metrics.get("error")
-                }
+                # Check collector type and format accordingly
+                if application.collector_type == "s3":
+                    formatted = {
+                        "timestamp": metrics.get("collected_at"),
+                        "bucket_size_bytes": metrics.get("bucket_size_bytes", 0) or 0,
+                        "number_of_objects": metrics.get("number_of_objects", 0) or 0,
+                        "error": metrics.get("error")
+                    }
+                else:  # EC2 - REPLACE THE OLD formatted DICTIONARY WITH THIS
+                    formatted = {
+                        "timestamp": metrics.get("collected_at"),
+                        "cpu": metrics.get("cpu_utilization", 0) or 0,
+                        "memory": metrics.get("memory_used_percent", 0) or 0,
+                        "network_in": (metrics.get("network_in_bytes", 0) or 0) / (1024 * 1024),
+                        "network_out": (metrics.get("network_out_bytes", 0) or 0) / (1024 * 1024),
+                        "network": ((metrics.get("network_in_bytes", 0) or 0) + (metrics.get("network_out_bytes", 0) or 0)) / (1024 * 1024),
+                        "disk": metrics.get("disk_used_percent", 0) or 0,
+                        "error": metrics.get("error")
+                    }
                 
                 # Send as SSE
                 yield f"data: {json.dumps(formatted)}\n\n"
             
-            await asyncio.sleep(5)  # Send updates every 5 seconds
+            await asyncio.sleep(5)
+    # Send updates every 5 seconds
+
     
     return StreamingResponse(
         event_generator(),
@@ -66,7 +77,6 @@ async def stream_realtime_metrics(
             "X-Accel-Buffering": "no"
         }
     )
-
 
 @router.get("/{app_id}")
 def get_latest_metrics(
@@ -99,21 +109,14 @@ def get_latest_metrics(
             "application_id": str(app_id)
         }
     
-    # Format response
-    return {
-        "application_id": str(app_id),
-        "timestamp": metrics.get("collected_at"),
-        "metrics": {
-            "cpu_utilization": metrics.get("cpu_utilization"),
-            "cpu_max": metrics.get("cpu_max"),
-            "memory_used_percent": metrics.get("memory_used_percent"),
-            "network_in_bytes": metrics.get("network_in_bytes"),
-            "network_out_bytes": metrics.get("network_out_bytes"),
-            "disk_used_percent": metrics.get("disk_used_percent"),
-            "cpu_credit_balance": metrics.get("cpu_credit_balance"),
-            "status_failed_system": metrics.get("status_failed_system")
-        },
-        "formatted": {
+    # Format response based on collector type
+    if application.collector_type == "s3":
+        formatted = {
+            "bucket_size_bytes": metrics.get("bucket_size_bytes", 0) or 0,
+            "number_of_objects": metrics.get("number_of_objects", 0) or 0
+        }
+    else:
+        formatted = {
             "cpu": metrics.get("cpu_utilization", 0) or 0,
             "memory": metrics.get("memory_used_percent", 0) or 0,
             "network": (
@@ -122,4 +125,11 @@ def get_latest_metrics(
             ) / (1024 * 1024),
             "disk": metrics.get("disk_used_percent", 0) or 0
         }
+    
+    # Format response
+    return {
+        "application_id": str(app_id),
+        "timestamp": metrics.get("collected_at"),
+        "metrics": metrics,
+        "formatted": formatted  # <-- This now uses the conditional formatting above
     }
