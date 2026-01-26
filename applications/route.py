@@ -11,7 +11,7 @@ from applications.repo import (
     create_application,
     get_application_by_id,
     get_application_by_user,
-    soft_delete_application,
+    delete_application,
     update_aws_credentials
 )
 
@@ -65,7 +65,7 @@ def delete_app(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    deleted = soft_delete_application(
+    deleted = delete_application(
         db,
         app_id=app_id,
         user_id=current_user.id
