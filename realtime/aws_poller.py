@@ -6,6 +6,7 @@ from database.database import Session_local
 from database.models import Application
 from metrics.aws import collect_ec2_metrics
 from metrics.aws_S3 import collect_S3_metrics
+from metrics.aws_labda import collect_lambda_metrics
 from helper.encryption import decrypt_value
 
 LATEST_METRICS = {}
@@ -55,6 +56,13 @@ def poll_all_applications():
                             aws_access_key_id=aws_access_key_id,
                             aws_secret_access_key=aws_secret_access_key
                         )
+                        elif app.collector_type.lower() == "lambda":
+                            metrics = collect_lambda_metrics(
+                                function_name=app.function_name,
+                                region=app.region,
+                                aws_access_key_id=aws_access_key_id,
+                                aws_secret_access_key=aws_secret_access_key
+                            )
                         metrics["collected_at"] = datetime.now(timezone.utc).isoformat()
                         metrics["application_id"] = str(app.id)
                         metrics["application_name"] = app.name

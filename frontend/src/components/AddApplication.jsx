@@ -12,6 +12,7 @@ const AddApplication = ({ onSuccess, onBack, onLogout }) => {
     region: '',
     instance_id: '',
     bucket_name: '',
+    function_name: '',
     aws_access_key_id: '',
     aws_secret_access_key: ''
   });
@@ -26,13 +27,17 @@ const AddApplication = ({ onSuccess, onBack, onLogout }) => {
       setError('Please fill in all required fields');
       return;
     }
-    // For EC2, instance_id is required; for S3, bucket_name is required
+    // For EC2, instance_id is required; for S3, bucket_name is required; for Lambda, function_name is required
     if (formData.collector_type === 'ec2' && !formData.instance_id) {
       setError('Instance ID is required for EC2');
       return;
     }
     if (formData.collector_type === 's3' && !formData.bucket_name) {
       setError('Bucket name is required for S3');
+      return;
+    }
+    if (formData.collector_type === 'lambda' && !formData.function_name) {
+      setError('Function name is required for Lambda');
       return;
     }
 
@@ -48,6 +53,7 @@ const AddApplication = ({ onSuccess, onBack, onLogout }) => {
         region: '',
         instance_id: '',
         bucket_name: '',
+        function_name: '',
         aws_access_key_id: '',
         aws_secret_access_key: ''
       });
@@ -119,7 +125,8 @@ const AddApplication = ({ onSuccess, onBack, onLogout }) => {
                     cloud: selectedCloud,
                     collector_type: '', // reset collector type when cloud changes
                     instance_id: '',
-                    bucket_name: ''
+                    bucket_name: '',
+                    function_name: ''
                   });
                 }}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition"
@@ -146,7 +153,8 @@ const AddApplication = ({ onSuccess, onBack, onLogout }) => {
                       ...formData,
                       collector_type: e.target.value,
                       instance_id: '',
-                      bucket_name: ''
+                      bucket_name: '',
+                      function_name: ''
                     });
                   }}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition"
@@ -175,6 +183,7 @@ const AddApplication = ({ onSuccess, onBack, onLogout }) => {
                 required
               />
             </div>
+
 
 
             {/* Instance ID (only for EC2) */}
@@ -208,6 +217,24 @@ const AddApplication = ({ onSuccess, onBack, onLogout }) => {
                   onChange={e => setFormData({ ...formData, bucket_name: e.target.value })}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition"
                   placeholder="my-bucket-name"
+                  required
+                />
+              </div>
+            )}
+
+            {/* Function Name (only for Lambda) */}
+            {formData.collector_type === 'lambda' && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <Server size={16} className="inline mr-2" />
+                  Function Name *
+                </label>
+                <input
+                  type="text"
+                  value={formData.function_name}
+                  onChange={e => setFormData({ ...formData, function_name: e.target.value })}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition"
+                  placeholder="my-lambda-function"
                   required
                 />
               </div>

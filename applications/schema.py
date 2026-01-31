@@ -9,8 +9,9 @@ class ApplicationsCreate(BaseModel):
     collector_type: str = Field(..., description="Type of collector (e.g., 'cloud', 'http')")
     cloud: str = Field(..., description="Cloud provider name")
     region: str = Field(..., description="Cloud region")
-    bucket_name: Optional[str] = Field(None, description="Bucket name for S3 applications")
-    instance_id: str = Field(None, description="Instance identifier")
+    bucket_name: Optional[str] = Field(None, description="Bucket name for S3 applications")  # REMOVED COMMA
+    function_name: Optional[str] = Field(None, description="Function name for Lambda applications")
+    instance_id: Optional[str] = Field(None, description="Instance identifier")  # Changed to Optional
     aws_access_key_id: Optional[str] = Field(None, description="AWS Access Key ID")
     aws_secret_access_key: Optional[str] = Field(None, description="AWS Secret Access Key")
 
@@ -24,6 +25,7 @@ class ApplicationRes(BaseModel):
     region: str
     instance_id: Optional[str] = None
     bucket_name: Optional[str] = None
+    function_name: Optional[str] = None
     is_active: bool
     aws_access_key_id: Optional[str] = None
     aws_secret_access_key: Optional[str] = None

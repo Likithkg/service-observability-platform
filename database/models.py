@@ -74,6 +74,11 @@ class Application(Base):
         nullable=True
     )
 
+    function_name = Column(
+        String,
+        nullable=True
+    )
+
     instance_id = Column(
         String,
         nullable=False
