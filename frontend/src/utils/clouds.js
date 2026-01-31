@@ -14,6 +14,11 @@ export const CLOUDS = [
         type: 's3',
         display: 'S3',
         fields: ['bucket_name']
+      },
+      {
+        type: 'lambda',
+        display: 'Lambda',
+        fields: ['function_name']
       }
     ]
   }

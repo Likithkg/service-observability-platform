@@ -51,6 +51,43 @@ aws:
       period: 86400
       storage_type: AllStorageTypes
 
+  lambda:
+    invocations:
+      namespace: AWS/Lambda
+      metric_name: Invocations
+      statistic: Sum
+      period: 300
+
+    errors:
+      namespace: AWS/Lambda
+      metric_name: Errors
+      statistic: Sum
+      period: 300
+
+    throttles:
+      namespace: AWS/Lambda
+      metric_name: Throttles
+      statistic: Sum
+      period: 300
+
+    duration_avg:
+      namespace: AWS/Lambda
+      metric_name: Duration
+      statistic: Average
+      period: 300
+
+    duration_max:
+      namespace: AWS/Lambda
+      metric_name: Duration
+      statistic: Maximum
+      period: 300
+
+    concurrent_executions:
+      namespace: AWS/Lambda
+      metric_name: ConcurrentExecutions
+      statistic: Maximum
+      period: 300
+
   cwagent:
     memory_used_percent:
       namespace: CWAgent

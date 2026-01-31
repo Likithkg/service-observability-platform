@@ -32,6 +32,7 @@ def create_application(
         region=app_in.region,
         instance_id=app_in.instance_id,
         bucket_name=app_in.bucket_name,
+        function_name=app_in.function_name,
         aws_access_key_id=aws_access_key,
         aws_secret_access_key=aws_secret_key,
         is_active=True
