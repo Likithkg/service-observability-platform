@@ -52,8 +52,6 @@ def decode_access_token(token: str) -> str:
     Raises JWTError if invalid or expired.
     """
     try:
-        if not SECRET_KEY:
-            raise RuntimeError("SECRET_KEY environment variable is not set!")
         payload = jwt.decode(
             token,
             SECRET_KEY,
