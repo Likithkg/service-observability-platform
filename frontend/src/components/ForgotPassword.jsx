@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { API_BASE } from '../utils/constants';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
@@ -12,7 +13,7 @@ const ForgotPassword = () => {
     setError('');
     setMessage('');
     try {
-      const res = await fetch('/auth/forgot-password', {
+      const res = await fetch(`${API_BASE}/auth/forgot-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
