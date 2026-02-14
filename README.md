@@ -1,6 +1,7 @@
+
 # Service Observability Platform
 
-A full-stack application for monitoring and managing cloud service metrics in real-time, built with **FastAPI** (backend), **React** (frontend), and **PostgreSQL** (database). The platform provides a user-friendly interface to register applications, authenticate securely, and visualize AWS metrics with live updates.
+A full-stack application for monitoring and managing cloud service metrics in real-time, built with **FastAPI** (backend), **Vite SPA** (frontend, plain JS/JSX, no React), and **PostgreSQL** (database). The platform provides a user-friendly interface to register applications, authenticate securely, and visualize AWS metrics with live updates.
 
 ## Features
 
@@ -22,11 +23,12 @@ A full-stack application for monitoring and managing cloud service metrics in re
 - **Cloud**: AWS SDK for CloudWatch metrics integration
 
 ### Frontend
-- **Framework**: React 18+ with Vite
+- **Framework**: Vite SPA (plain JS/JSX, no React)
 - **Styling**: Tailwind CSS
-- **Charts**: Recharts for data visualization
-- **Icons**: Lucide React
-- **State Management**: React hooks with localStorage persistence
+- **Charts**: (Add your charting library or custom implementation)
+- **Icons**: (Add your icon library or custom SVGs)
+- **State Management**: LocalStorage, custom hooks/utilities
+- **HTTP Client**: axios
 
 ## Project Structure
 
@@ -39,10 +41,10 @@ A full-stack application for monitoring and managing cloud service metrics in re
 ├── database/               # SQLAlchemy models & ORM
 ├── config/                 # Configuration & metrics schema
 ├── helper/                 # Utility functions
-├── frontend/               # React application
+├── frontend/               # Vite SPA application
 │   ├── src/
-│   │   ├── components/     # UI Components (Dashboard, Metrics, Auth)
-│   │   ├── services/       # API client
+│   │   ├── components/     # UI Components (Dashboard, Metrics, Auth, etc.)
+│   │   ├── services/       # API client (axios)
 │   │   └── utils/          # Constants & helpers
 │   └── package.json
 ├── main.py                 # Application entry point
@@ -115,13 +117,11 @@ This starts:
 - **Backend API** (port 8000)
 - **Frontend** (port 3000)
 
-### Production Deployment with Fly.io
 
-```bash
-fly auth login
-fly launch
-fly deploy
-```
+### Production Deployment
+
+- **Frontend**: Deploy to Vercel (SPA routing via vercel.json)
+- **Backend**: Deploy to Railway or Fly.io
 
 See [DOCKER_SETUP.md](DOCKER_SETUP.md) for detailed Docker setup instructions.
 
@@ -203,12 +203,20 @@ This is a personal project showcasing full-stack development capabilities. Contr
 
 MIT License - feel free to use this project for learning and development.
 
-## Future Enhancements
+
+## Future Plans & Enhancements
 
 - [ ] Multi-stage Docker builds for optimized production images
 - [ ] Gunicorn + Uvicorn for production-grade ASGI serving
 - [ ] HttpOnly cookies for token storage (security improvement)
 - [ ] Advanced metrics analytics and alerts
 - [ ] User role management and permissions
-- [ ] Comprehensive test coverage
-- [ ] CI/CD pipeline setup
+- [ ] Comprehensive test coverage (backend & frontend)
+- [ ] CI/CD pipeline setup (GitHub Actions, Vercel, Railway)
+- [ ] OAuth2/Social login support
+- [ ] Multi-cloud provider support (GCP, Azure)
+- [ ] Customizable dashboards and widgets
+- [ ] Notification system (email, Slack, etc.)
+- [ ] Improved error handling and logging
+- [ ] Accessibility improvements
+- [ ] Internationalization (i18n)
