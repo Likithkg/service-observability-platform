@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm  # ADD THIS
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
-from datetime import datetime
+from datetime import datetime, timezone
 from auth.security import (
     hash_password,
     verify_password,
@@ -109,7 +109,7 @@ def resetPassword(request: ResetPaswordReq, db: Session = Depends(get_db)):
             detail = "Unauthorized\n\nInvalid token"
         )
     
-    if getattr(user, 'reset_token_expire') and getattr(user, 'reset_token_expire') < datetime.utcnow():
+    if getattr(user, 'reset_token_expire') and getattr(user, 'reset_token_expire') < datetime.now(timezone.utc):
         raise HTTPException(
             status_code = status.HTTP_401_UNAUTHORIZED,
             detail = "The token has expired try again"
