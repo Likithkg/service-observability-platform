@@ -48,7 +48,7 @@ app.add_middleware(
         "http://localhost:5173",
         "https://service-observability-platform.vercel.app",
     ],
-    allow_origin_regex=r"https://service-observability-platform(-[a-z0-9]+)?\.vercel\.app",
+    allow_origin_regex=r"https://service-observability-platform(-[a-z0-9-]+)?\.vercel\.app",
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
