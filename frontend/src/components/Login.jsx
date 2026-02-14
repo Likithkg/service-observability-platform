@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Cloud, Mail, Lock } from 'lucide-react';
+import { Cloud, Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { authAPI } from '../services/api';
 
-const Login = ({ onSuccess, onSwitchToRegister }) => {
+const Login = ({ onSuccess, onSwitchToRegister, onSwitchToForgotPassword }) => {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async () => {
     setError('');
@@ -20,6 +21,10 @@ const Login = ({ onSuccess, onSwitchToRegister }) => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
   };
 
   return (
@@ -55,19 +60,31 @@ const Login = ({ onSuccess, onSwitchToRegister }) => {
             />
           </div>
 
-          <div>
+          <div className="relative">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               <Lock size={16} className="inline mr-2" />
               Password
             </label>
             <input
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               value={formData.password}
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition pr-12"
               placeholder="••••••••"
               onKeyPress={(e) => e.key === 'Enter' && handleSubmit()}
             />
+            <button
+              type="button"
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-700"
+              onClick={() => setShowPassword((v) => !v)}
+              tabIndex={-1}
+            >
+              {showPassword ? (
+                <EyeOff size={20} />
+              ) : (
+                <Eye size={20} />
+              )}
+            </button>
           </div>
 
           <button
@@ -79,7 +96,16 @@ const Login = ({ onSuccess, onSwitchToRegister }) => {
           </button>
         </div>
 
-        <div className="mt-6 text-center">
+        <div className="mt-6 text-center space-y-2">
+          <p>
+            <button
+              onClick={onSwitchToForgotPassword}
+              className="text-sm text-blue-600 hover:underline"
+              type="button"
+            >
+              Forgot password?
+            </button>
+          </p>
           <p className="text-gray-600">
             Don't have an account?{' '}
             <button

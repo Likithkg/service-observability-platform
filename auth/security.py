@@ -4,6 +4,7 @@ from passlib.context import CryptContext
 from jose import jwt, JWTError
 from datetime import datetime, timedelta
 import os
+import secrets
 
 pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
@@ -56,3 +57,11 @@ def decode_access_token(token: str) -> str:
         return subject
     except JWTError as e:
         raise JWTError(f"Invalid token: {str(e)}")
+    
+
+def generateResetToken():
+    return secrets.token_urlsafe(32)
+
+
+def getResetTokenExpire():
+    return datetime.utcnow() + timedelta(minutes=30)
