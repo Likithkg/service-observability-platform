@@ -16,23 +16,21 @@ from realtime.aws_poller import start_poller_thread
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup
+    # Startup (sync SQLAlchemy engine)
     with engine.connect() as conn:
         conn.execute(text("CREATE SCHEMA IF NOT EXISTS observability"))
         conn.commit()
-    
     Base.metadata.create_all(bind=engine)
     print("Database ready")
-    
+
     # Start background metrics poller
     start_poller_thread()
     print("Metrics poller started")
-    
+
     print("\nServer running on http://localhost:8000")
     print("API Docs: http://localhost:8000/docs\n")
-    
+
     yield
-    
     # Shutdown (if needed)
     pass
 

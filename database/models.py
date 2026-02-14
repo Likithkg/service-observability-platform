@@ -30,6 +30,8 @@ class User(Base):
         DateTime(timezone=True),
         server_default=func.now()
     )
+    reset_token = Column(String, nullable=True)
+    reset_token_expire = Column(DateTime, nullable=True)
 
 class Application(Base):
     __tablename__ = "applications"

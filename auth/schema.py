@@ -20,3 +20,10 @@ class UserRes(BaseModel):
     created_at: datetime
     
     model_config = ConfigDict(from_attributes=True)
+
+class ForgotPasswordReq(BaseModel):
+    email: EmailStr
+
+class ResetPaswordReq(BaseModel):
+    token: str
+    new_passowrd: str

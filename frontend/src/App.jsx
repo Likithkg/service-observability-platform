@@ -4,6 +4,8 @@ import Register from './components/Register';
 import Dashboard from './components/Dashboard';
 import AddApplication from './components/AddApplication';
 import Metrics from './components/Metrics';
+import ForgotPassword from './components/ForgotPassword';
+import ResetPassword from './components/ResetPassword';
 import { applicationsAPI } from './services/api';
 
 function App() {
@@ -41,6 +43,13 @@ function App() {
     };
 
     validateToken();
+  }, []);
+
+  // Show reset password page if URL is /reset-password
+  useEffect(() => {
+    if (window.location.pathname === '/reset-password') {
+      setCurrentPage('resetPassword');
+    }
   }, []);
 
   useEffect(() => {
@@ -113,6 +122,16 @@ function App() {
       <Login
         onSuccess={handleLoginSuccess}
         onSwitchToRegister={() => setCurrentPage('register')}
+        onSwitchToForgotPassword={() => setCurrentPage('forgotPassword')}
+        isDarkTheme={isDarkTheme}
+      />
+    );
+  }
+
+  if (currentPage === 'forgotPassword') {
+    return (
+      <ForgotPassword
+        onBack={() => setCurrentPage('login')}
         isDarkTheme={isDarkTheme}
       />
     );
@@ -148,6 +167,10 @@ function App() {
         isDarkTheme={isDarkTheme}
       />
     );
+  }
+
+  if (currentPage === 'resetPassword') {
+    return <ResetPassword />;
   }
 
   return (
