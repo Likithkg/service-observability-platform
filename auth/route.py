@@ -11,7 +11,6 @@ from auth.security import (
     generateResetToken,
     getResetTokenExpire
 )
-from auth.email import sendResetLink
 from auth.dependency import get_current_user
 from auth.schema import UserCreate, TokenRes, UserRes, ForgotPasswordReq, ResetPaswordReq  # Remove UserLogin from here
 from database.database import get_db
@@ -98,13 +97,8 @@ def forgotPassword(request: Request, body: ForgotPasswordReq, db: Session = Depe
     setattr(user, 'reset_token', token)
     setattr(user, 'reset_token_expire', getResetTokenExpire())
     db.commit()
-    # Build the reset link base dynamically
-    # Use dynamic frontend URL for reset link
-    import os
-    frontend_url = os.getenv("FRONTEND_URL", "http://localhost:3000")
-    reset_link = f"{frontend_url}/reset-password?token={token}"
-    sendResetLink(str(getattr(user, 'email')), reset_link)
-    return{"message": "To continue further please verify your mail\nA reset link has been sent to your mail"}
+    # Return the token directly for frontend redirect
+    return {"token": token, "message": "Token generated. Redirect user to reset page."}
 
 @router.post("/reset-password", status_code=status.HTTP_202_ACCEPTED)
 def resetPassword(request: ResetPaswordReq, db: Session = Depends(get_db)):

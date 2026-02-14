@@ -19,8 +19,10 @@ const ForgotPassword = () => {
         body: JSON.stringify({ email }),
       });
       const data = await res.json();
-      if (res.ok) {
-        setMessage(data.message || 'Check your email for the reset link.');
+      console.log('Forgot password response:', data);
+      if (res.ok && data.token) {
+        window.location.href = `/reset-password?token=${data.token}`;
+        return;
       } else {
         setError(data.detail || 'Something went wrong.');
       }
