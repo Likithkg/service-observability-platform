@@ -109,7 +109,7 @@ def resetPassword(request: ResetPaswordReq, db: Session = Depends(get_db)):
             detail = "Unauthorized\n\nInvalid token"
         )
     
-    if getattr(user, 'reset_token_expire') and getattr(user, 'reset_token_expire') < datetime.now(timezone.utc):
+    if getattr(user, 'reset_token_expire') and getattr(user, 'reset_token_expire') < datetime.utcnow():
         raise HTTPException(
             status_code = status.HTTP_401_UNAUTHORIZED,
             detail = "The token has expired try again"
