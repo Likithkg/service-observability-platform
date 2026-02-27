@@ -151,7 +151,6 @@ def build():
             "image_name": os.getenv("CONTAINER_NAME", ""),
         }
 
-        # STEP 4: Validate Git Access
         print("STEP 4: Verifying Git access...")
 
         git_cmd = format_command(
@@ -161,7 +160,11 @@ def build():
 
         exit_code, output, error = execute_command(ssh, git_cmd)
 
-        if exit_code != 0:
+        combined = (output + error).lower()
+
+        if "successfully authenticated" in combined:
+            print("Git authentication successful.\n")
+        else:
             print("Git authentication failed.")
             print(error)
             return False
