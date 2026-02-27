@@ -1,0 +1,27 @@
+tasks:
+  - name: check_git_login
+    command: "ssh -T git@github.com"
+
+  - name: check_repo_cloned
+    command: "test -d {repo_path}"
+
+  - name: clone_repo
+    command: "git clone -b {branch} {repo_url} {repo_path}"
+
+  - name: pull_latest
+    command: "cd {repo_path} && git pull origin {branch}"
+
+  - name: check_docker
+    command: "docker --version"
+
+  - name: install_docker
+    command: "curl -fsSL https://get.docker.com | sh"
+
+  - name: check_container
+    command: "docker ps -q -f name={image_name}"
+
+  - name: docker_down
+    command: "cd {repo_path} && docker-compose down"
+
+  - name: docker_build
+    command: "cd {repo_path} && docker-compose up -d --build"

@@ -1,4 +1,3 @@
-
 # Service Observability Platform
 
 A full-stack application for monitoring and managing cloud service metrics in real-time, built with **FastAPI** (backend), **Vite SPA** (frontend, plain JS/JSX, no React), and **PostgreSQL** (database). The platform provides a user-friendly interface to register applications, authenticate securely, and visualize AWS metrics with live updates.
@@ -117,7 +116,6 @@ This starts:
 - **Backend API** (port 8000)
 - **Frontend** (port 3000)
 
-
 ### Production Deployment
 
 - **Frontend**: Deploy to Vercel (SPA routing via vercel.json)
@@ -183,10 +181,7 @@ VITE_API_URL=http://localhost:8000
 
 ### Backend Tests
 ```bash
-# Run with pytest
 pytest
-
-# Run specific test file
 pytest test/test_auth.py
 ```
 
@@ -211,3 +206,115 @@ npm run test
 - [ ] Improved error handling and logging
 - [ ] Accessibility improvements
 - [ ] Internationalization (i18n)
+
+---
+
+# 🚀 Remote Build & Deployment Script (Cloud VM / Azure VM)
+
+This project includes a local deployment automation script that allows you to build and deploy the application on a remote cloud VM (such as an Azure VM) directly from your local machine.
+
+### What the Script Does
+
+- Connects to a remote VM using SSH
+- Validates `.pem` certificate permissions
+- Verifies Git access
+- Clones repository (if missing)
+- Pulls latest changes
+- Installs Docker (if missing)
+- Stops running container (if exists)
+- Rebuilds Docker image
+- Restarts container
+- Streams live build logs
+- Automatically closes SSH connection even if the build fails
+
+---
+
+## 📂 Certificate Setup
+
+Place your SSH private key inside:
+
+```
+script/cert/
+```
+
+Example:
+
+```
+script/
+ ├── cert/
+ │   └── observability_key.pem
+```
+
+---
+
+## ⚙️ Required `.env` Variables for Build Script
+
+```
+HOST_NAME=YOU_HOST_NAME
+HOST_IP=HOST_IP
+CERT_NAME=file.pem
+SSH_PORT=22
+CONTAINER_NAME=CINTAINER_NAME
+REPO_URL=REPO_URL
+REPO_PATH=PROJECT_PATH_IN_VM
+GIT_BRANCH=DESIRED_BRANCH
+YAML_NAME=cmd.yaml
+```
+
+---
+
+## 📜 YAML Deployment Configuration
+
+Deployment commands are defined in:
+
+```
+script/cmd/commands.yaml
+```
+
+You may modify this file as required to customize deployment steps.
+
+Example:
+
+```yaml
+tasks:
+  - name: check_git_login
+    command: "git ls-remote {repo_url}"
+
+  - name: check_repo_cloned
+    command: "test -d {repo_path}"
+
+  - name: clone_repo
+    command: "git clone -b {branch} {repo_url} {repo_path}"
+
+  - name: pull_latest
+    command: "cd {repo_path} && git pull origin {branch}"
+
+  - name: check_docker
+    command: "docker --version"
+
+  - name: install_docker
+    command: "curl -fsSL https://get.docker.com | sh"
+
+  - name: check_container
+    command: "docker ps -q -f name={image_name}"
+
+  - name: docker_down
+    command: "cd {repo_path} && docker-compose down"
+
+  - name: docker_build
+    command: "cd {repo_path} && docker-compose up -d --build"
+```
+
+---
+
+## ▶️ Running the Build Script
+
+From your local machine:
+
+```bash
+python build.py
+```
+
+This script can be used when the code is deployed on a cloud VM such as an Azure VM or any SSH-accessible Linux server.
+
+It enables automated remote builds without manually logging into the VM.
