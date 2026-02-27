@@ -4,3 +4,4 @@ venv
 __pycache__
 aws_test.py 
 node_modules
+observability_key.pem

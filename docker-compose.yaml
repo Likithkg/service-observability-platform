@@ -13,20 +13,3 @@ services:
 
     volumes:
       - ./.env:/app/.env:ro
-
-  observability-frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile.frontend
-
-    container_name: observability-frontend
-    restart: unless-stopped
-
-    environment:
-      VITE_API_BASE: http://YOUR_VM_PUBLIC_IP:8000
-
-    ports:
-      - "3000:3000"
-
-    depends_on:
-      - observability-api
