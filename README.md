@@ -195,15 +195,6 @@ pytest test/test_auth.py
 npm run test
 ```
 
-## Contributing
-
-This is a personal project showcasing full-stack development capabilities. Contributions are welcome via pull requests.
-
-## License
-
-MIT License - feel free to use this project for learning and development.
-
-
 ## Future Plans & Enhancements
 
 - [ ] Multi-stage Docker builds for optimized production images
