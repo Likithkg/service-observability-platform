@@ -1,5 +1,5 @@
 export const API_BASE =
-  "https://joe-costume-bullet-illustrations.trycloudflare.com";
+  "https://supposed-refugees-judgment-athletics.trycloudflare.com";
 
 // export const API_BASE =
   // "https://service-observability-platform-production.up.railway.app";

@@ -28,89 +28,94 @@ const Login = ({ onSuccess, onSwitchToRegister, onSwitchToForgotPassword }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-indigo-600 rounded-full mb-4">
-            <Cloud className="text-white" size={32} />
+    <div className="min-h-screen gradient-bg flex items-center justify-center p-4">
+      <div className="card max-w-md w-full p-8 space-y-8">
+        <div className="text-center space-y-4">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-indigo-600 to-indigo-700 rounded-full">
+            <Cloud className="text-white" size={40} />
           </div>
-          <h1 className="text-3xl font-bold text-gray-800">Welcome Back</h1>
-          <p className="text-gray-600 mt-2">Sign in to manage your applications</p>
+          <div className="space-y-2">
+            <h1 className="text-4xl font-bold text-slate-900 animate-fade-in">Welcome Back</h1>
+            <p className="text-slate-600 text-lg">Sign in to manage your cloud applications</p>
+          </div>
         </div>
 
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl animate-scale-in">
             {error}
           </div>
         )}
 
         <div className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+          <div className="space-y-2">
+            <label className="block text-sm font-semibold text-slate-700">
               <Mail size={16} className="inline mr-2" />
-              Email
+              Email Address
             </label>
             <input
               type="email"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition"
+              className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition text-slate-900 placeholder-slate-400"
               placeholder="you@example.com"
               onKeyPress={(e) => e.key === 'Enter' && handleSubmit()}
             />
           </div>
 
-          <div className="relative">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+          <div className="space-y-2">
+            <label className="block text-sm font-semibold text-slate-700">
               <Lock size={16} className="inline mr-2" />
               Password
             </label>
-            <input
-              type={showPassword ? 'text' : 'password'}
-              value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition pr-12"
-              placeholder="••••••••"
-              onKeyPress={(e) => e.key === 'Enter' && handleSubmit()}
-            />
-            <button
-              type="button"
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-700"
-              onClick={() => setShowPassword((v) => !v)}
-              tabIndex={-1}
-            >
-              {showPassword ? (
-                <EyeOff size={20} />
-              ) : (
-                <Eye size={20} />
-              )}
-            </button>
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                className="w-full px-4 py-3 pr-12 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition text-slate-900 placeholder-slate-400"
+                placeholder="Enter your password"
+                onKeyPress={(e) => e.key === 'Enter' && handleSubmit()}
+              />
+              <button
+                type="button"
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-indigo-600 transition"
+                onClick={() => setShowPassword((v) => !v)}
+                tabIndex={-1}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           </div>
 
           <button
             onClick={handleSubmit}
             disabled={loading}
-            className="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition disabled:opacity-50"
+            className="btn-primary w-full"
           >
-            {loading ? 'Signing in...' : 'Sign In'}
+            {loading ? (
+              <div className="flex items-center justify-center space-x-2">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                <span>Signing in...</span>
+              </div>
+            ) : (
+              'Sign In'
+            )}
           </button>
         </div>
 
-        <div className="mt-6 text-center space-y-2">
-          <p>
-            <button
-              onClick={onSwitchToForgotPassword}
-              className="text-sm text-blue-600 hover:underline"
-              type="button"
-            >
-              Forgot password?
-            </button>
-          </p>
-          <p className="text-gray-600">
+        <div className="pt-6 space-y-4 text-center border-t border-slate-200">
+          <button
+            onClick={onSwitchToForgotPassword}
+            className="text-sm text-indigo-600 font-medium hover:text-indigo-700 transition"
+            type="button"
+          >
+            Forgot password?
+          </button>
+          <p className="text-slate-600 text-sm">
             Don't have an account?{' '}
             <button
               onClick={onSwitchToRegister}
-              className="text-indigo-600 font-semibold hover:text-indigo-700"
+              className="text-indigo-600 font-semibold hover:text-indigo-700 transition"
             >
               Sign Up
             </button>
