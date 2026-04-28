@@ -41,10 +41,17 @@ app = FastAPI(
     redirect_slashes=False
 )
 
-# Updated CORS configuration to allow all origins for testing
+# Updated CORS configuration to fix CORS issues
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins
+    allow_origins=[
+        "https://service-observability-platform.vercel.app",
+        "https://*.vercel.app",
+        "https://*.trycloudflare.com",
+        "http://localhost:3000",
+        "http://localhost:5173",
+        "http://localhost:8000"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
