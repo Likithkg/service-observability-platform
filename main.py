@@ -20,12 +20,12 @@ async def lifespan(app: FastAPI):
     with engine.connect() as conn:
         conn.execute(text("CREATE SCHEMA IF NOT EXISTS observability"))
         conn.commit()
-    Base.metadata.create_all(bind=engine)
+        Base.metadata.create_all(bind=engine)
     print("Database ready")
 
     # Start background metrics poller
     start_poller_thread()
-    print("Metrics poller started")
+    print("Metrics poller started") 
 
     print("\nServer running on http://localhost:8000")
     print("API Docs: http://localhost:8000/docs\n")
@@ -41,9 +41,10 @@ app = FastAPI(
     redirect_slashes=False
 )
 
+# Updated CORS configuration to allow all origins for testing
 app.add_middleware(
     CORSMiddleware,
-    allow_origin_regex=r"https://service-observability-platform(-[a-z0-9-]+)?\.vercel\.app",
+    allow_origins=["*"],  # Allow all origins
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
