@@ -22,4 +22,4 @@ COPY . .
 EXPOSE 8000
 
 # Production-ready command
-CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "main:app", "-w", "2", "-b", "0.0.0.0:8000"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
