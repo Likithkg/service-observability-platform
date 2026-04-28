@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Mail, MessageCircle, AlertCircle } from 'lucide-react';
 import { API_BASE } from '../utils/constants';
 
 const ForgotPassword = () => {
@@ -34,27 +35,64 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded shadow">
-      <h2 className="text-2xl font-bold mb-4">Forgot Password</h2>
-      <form onSubmit={handleSubmit}>
-        <label className="block mb-2 font-medium">Email</label>
-        <input
-          type="email"
-          className="w-full p-2 border rounded mb-4"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-          required
-        />
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50"
-          disabled={loading}
-        >
-          {loading ? 'Sending...' : 'Send Reset Link'}
-        </button>
-      </form>
-      {message && <div className="mt-4 text-green-600">{message}</div>}
-      {error && <div className="mt-4 text-red-600">{error}</div>}
+    <div className="min-h-screen gradient-bg flex items-center justify-center p-4">
+      <div className="card max-w-md w-full p-8 space-y-8">
+        <div className="text-center space-y-4">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-indigo-600 to-indigo-700 rounded-full">
+            <Mail className="text-white" size={40} />
+          </div>
+          <div className="space-y-2">
+            <h1 className="text-4xl font-bold text-slate-900 animate-fade-in">Reset Password</h1>
+            <p className="text-slate-600 text-lg">We'll send you a link to reset your password</p>
+          </div>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-2">
+            <label className="block text-sm font-semibold text-slate-700">
+              <Mail size={16} className="inline mr-2" />
+              Email Address
+            </label>
+            <input
+              type="email"
+              className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition text-slate-900 placeholder-slate-400"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              placeholder="you@example.com"
+              required
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="btn-primary w-full"
+            disabled={loading}
+          >
+            {loading ? (
+              <div className="flex items-center justify-center space-x-2">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                <span>Sending...</span>
+              </div>
+            ) : (
+              'Send Reset Link'
+            )}
+          </button>
+        </form>
+
+        {message && (
+          <div className="flex items-center space-x-2 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl animate-scale-in">
+            <MessageCircle size={16} />
+            <span>{message}</span>
+          </div>
+        )}
+        
+        {error && (
+          <div className="flex items-center space-x-2 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl animate-scale-in">
+            <AlertCircle size={16} />
+            <span>{error}</span>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

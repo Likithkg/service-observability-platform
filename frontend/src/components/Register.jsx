@@ -48,25 +48,27 @@ const Register = ({ onSuccess, onSwitchToLogin }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-indigo-600 rounded-full mb-4">
-            <User className="text-white" size={32} />
+    <div className="min-h-screen gradient-bg flex items-center justify-center p-4">
+      <div className="card max-w-md w-full p-8 space-y-8">
+        <div className="text-center space-y-4">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-indigo-600 to-indigo-700 rounded-full">
+            <User className="text-white" size={40} />
           </div>
-          <h1 className="text-3xl font-bold text-gray-800">Create Account</h1>
-          <p className="text-gray-600 mt-2">Join us to manage your cloud applications</p>
+          <div className="space-y-2">
+            <h1 className="text-4xl font-bold text-slate-900 animate-fade-in">Create Account</h1>
+            <p className="text-slate-600 text-lg">Join us to manage your cloud applications</p>
+          </div>
         </div>
 
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl animate-scale-in">
             {error}
           </div>
         )}
 
         <div className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+          <div className="space-y-2">
+            <label className="block text-sm font-semibold text-slate-700">
               <User size={16} className="inline mr-2" />
               Username
             </label>
@@ -74,27 +76,27 @@ const Register = ({ onSuccess, onSwitchToLogin }) => {
               type="text"
               value={formData.username}
               onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition"
+              className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition text-slate-900 placeholder-slate-400"
               placeholder="johndoe"
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+          <div className="space-y-2">
+            <label className="block text-sm font-semibold text-slate-700">
               <Mail size={16} className="inline mr-2" />
-              Email
+              Email Address
             </label>
             <input
               type="email"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition"
+              className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition text-slate-900 placeholder-slate-400"
               placeholder="you@example.com"
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+          <div className="space-y-2">
+            <label className="block text-sm font-semibold text-slate-700">
               <Lock size={16} className="inline mr-2" />
               Password
             </label>
@@ -103,57 +105,66 @@ const Register = ({ onSuccess, onSwitchToLogin }) => {
                 type={showPassword ? "text" : "password"}
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition pr-12"
-                placeholder="••••••••"
+                className="w-full px-4 py-3 pr-12 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition text-slate-900 placeholder-slate-400"
+                placeholder="Create a strong password"
               />
               <button
                 type="button"
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-700"
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-indigo-600 transition"
                 onClick={() => setShowPassword((v) => !v)}
                 tabIndex={-1}
               >
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
           </div>
 
-          <div className="relative">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+          <div className="space-y-2">
+            <label className="block text-sm font-semibold text-slate-700">
               <Lock size={16} className="inline mr-2" />
               Confirm Password
             </label>
-            <input
-              type={showConfirmPassword ? "text" : "password"}
-              value={formData.confirmPassword}
-              onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition pr-12"
-              placeholder="••••••••"
-            />
-            <button
-              type="button"
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-700"
-              onClick={toggleConfirmPasswordVisibility}
-              tabIndex={-1}
-            >
-              {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-            </button>
+            <div className="relative">
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                value={formData.confirmPassword}
+                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                className="w-full px-4 py-3 pr-12 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition text-slate-900 placeholder-slate-400"
+                placeholder="Confirm your password"
+              />
+              <button
+                type="button"
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-indigo-600 transition"
+                onClick={toggleConfirmPasswordVisibility}
+                tabIndex={-1}
+              >
+                {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           </div>
 
           <button
             onClick={handleSubmit}
             disabled={loading}
-            className="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition disabled:opacity-50"
+            className="btn-primary w-full"
           >
-            {loading ? 'Creating Account...' : 'Create Account'}
+            {loading ? (
+              <div className="flex items-center justify-center space-x-2">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                <span>Creating...</span>
+              </div>
+            ) : (
+              'Create Account'
+            )}
           </button>
         </div>
 
-        <div className="mt-6 text-center">
-          <p className="text-gray-600">
+        <div className="pt-6 text-center border-t border-slate-200">
+          <p className="text-slate-600 text-sm">
             Already have an account?{' '}
             <button
               onClick={onSwitchToLogin}
-              className="text-indigo-600 font-semibold hover:text-indigo-700"
+              className="text-indigo-600 font-semibold hover:text-indigo-700 transition"
             >
               Sign In
             </button>
