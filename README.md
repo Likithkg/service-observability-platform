@@ -1,320 +1,303 @@
-# Service Observability Platform
+# Cloud Monitor Service
 
-A full-stack application for monitoring and managing cloud service metrics in real-time, built with **FastAPI** (backend), **Vite SPA** (frontend, plain JS/JSX, no React), and **PostgreSQL** (database). The platform provides a user-friendly interface to register applications, authenticate securely, and visualize AWS metrics with live updates.
+<p align="center">
+  <strong>A real-time cloud observability platform for monitoring AWS resources with live metrics streaming.</strong>
+</p>
 
-## Features
+<div align="center">
 
-- **User Authentication**: Secure JWT-based authentication with role-based access control
-- **Application Management**: Create, view, and delete applications with ease
-- **Real-time Metrics Visualization**: Display CPU, Memory, Network, and Disk metrics with live streaming updates
-- **Dark/Light Theme**: Global theme system persisted across sessions
-- **AWS Integration**: Fetch and monitor real-time AWS metrics from CloudWatch
-- **Responsive Design**: Tailwind CSS for modern, mobile-friendly UI
-- **Docker Support**: Complete containerization for development and production deployment
+[![Python](https://img.shields.io/badge/Python-3.12-blue)](https://python.org)
+[![FastAPI](https://img.shields.io/badge/FastAPI-modern-green)](https://fastapi.tiangolo.com)
+[![React](https://img.shields.io/badge/React-18-purple)](https://reactjs.org)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-14+-blue)](https://postgresql.org)
 
-## Tech Stack
+</div>
 
-### Backend
-- **Framework**: FastAPI (Python 3.12)
-- **Database**: PostgreSQL with SQLAlchemy ORM
-- **Authentication**: JWT tokens with Bearer scheme
-- **Real-time**: Server-Sent Events (SSE) for metrics streaming
-- **Cloud**: AWS SDK for CloudWatch metrics integration
+---
 
-### Frontend
-- **Framework**: Vite SPA (plain JS/JSX, no React)
-- **Styling**: Tailwind CSS
-- **Charts**: (Add your charting library or custom implementation)
-- **Icons**: (Add your icon library or custom SVGs)
-- **State Management**: LocalStorage, custom hooks/utilities
-- **HTTP Client**: axios
+## ✨ Overview
 
-## Project Structure
+Cloud Monitor Service provides real-time visibility into your AWS infrastructure. Register EC2 instances, S3 buckets, or Lambda functions, and watch their metrics stream live through an intuitive dashboard powered by Server-Sent Events (SSE).
 
+**Key capabilities:**
+- 📊 **Real-time monitoring** — CloudWatch metrics polled every 30s, streamed to frontend via SSE
+- 🔐 **Secure credential storage** — AWS keys encrypted at rest using Fernet symmetric encryption
+- ☁️ **Multi-resource support** — EC2, S3, Lambda with comprehensive metric coverage
+- 🎨 **Modern UI** — React + Tailwind CSS with dark/light theme support
+- 🚀 **Production-ready** — Docker deployment with Fly.io, Vercel, or Railway
+
+---
+
+## 🏗️ Architecture
+
+```mermaid
+graph TB
+    subgraph "Frontend"
+        A[React 18 SPA] --> B[Vite Dev Server :3000]
+        B --> C[Tailwind CSS + Recharts]
+    end
+    
+    subgraph "Backend API"
+        D[FastAPI :8000] --> E[Auth System<br/>JWT + Argon2]
+        D --> F[Application CRUD]
+        D --> G[Metric Collection]
+        G --> H[Background Poller<br/>30s interval]
+        H --> I[AWS CloudWatch API]
+    end
+    
+    subgraph "Data Layer"
+        J[(PostgreSQL)] --> K[Encrypted Credentials]
+        J --> L[Application Data]
+        J --> M[Metric History]
+    end
+    
+    B -.->|Proxy /api/*| D
+    E --> J
+    F --> J
 ```
-├── api/                    # FastAPI application setup
-├── auth/                   # Authentication & authorization
-├── applications/           # Application management (CRUD)
-├── metrics/                # Metrics endpoints & visualization
-├── realtime/               # Real-time metrics polling
-├── database/               # SQLAlchemy models & ORM
-├── config/                 # Configuration & metrics schema
-├── helper/                 # Utility functions
-├── frontend/               # Vite SPA application
-│   ├── src/
-│   │   ├── components/     # UI Components (Dashboard, Metrics, Auth, etc.)
-│   │   ├── services/       # API client (axios)
-│   │   └── utils/          # Constants & helpers
-│   └── package.json
-├── main.py                 # Application entry point
-├── Dockerfile              # Backend containerization
-├── Dockerfile.frontend     # Frontend containerization
-├── docker-compose.yaml     # Multi-service orchestration
-├── fly.toml                # Fly.io deployment configuration
-└── DOCKER_SETUP.md         # Docker setup documentation
-```
 
-## Getting Started
+---
+
+## 🚀 Quick Start
 
 ### Prerequisites
-- Python 3.12+
-- Node.js 18+
-- PostgreSQL 14+
-- Docker & Docker Compose (optional)
+
+- **Python** 3.12+
+- **Node.js** 18+ (or 20 for Docker builds)
+- **PostgreSQL** 14+
+- **AWS Account** with CloudWatch access
 
 ### Backend Setup
 
 ```bash
-# Create virtual environment
-python3 -m venv venv
-source venv/bin/activate
+# Clone and setup backend
+git clone <repository-url>
+cd service-observability-platform
 
-# Install dependencies
+python3 -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
 
-# Set environment variables
-export DATABASE_URL="postgresql://user:password@localhost/observability_db"
-export SECRET_KEY="your-secret-key"
-export AWS_ACCESS_KEY_ID="your-aws-key"
-export AWS_SECRET_ACCESS_KEY="your-aws-secret"
-export AWS_REGION="us-east-1"
+# Configure environment variables
+export DATA_BASE_URL="postgresql://user:password@localhost/observability"
+export SECRET_KEY="your-jwt-secret-key"
+export ENCRYPTION_KEY="your-fernet-key"  # Optional: auto-generates in dev
 
-# Run migrations (if applicable)
-# Alembic or manual setup depending on setup
-
-# Start the server
+# Start the API server
 python main.py
-# Server runs on http://localhost:8000
+# → API available at http://localhost:8000
+# → Swagger docs at http://localhost:8000/docs
 ```
 
 ### Frontend Setup
 
 ```bash
 cd frontend
-
-# Install dependencies
 npm install
-
-# Set environment variables
-export VITE_API_URL="http://localhost:8000"
-
-# Start development server
 npm run dev
-# App runs on http://localhost:5173
+# → UI available at http://localhost:3000
+# → Proxies API requests to localhost:8000
 ```
 
-## Docker Deployment
-
-### Local Development with Docker Compose
+### Docker Deployment
 
 ```bash
 docker-compose up -d
-```
-
-This starts:
-- **PostgreSQL** (port 5432)
-- **Backend API** (port 8000)
-- **Frontend** (port 3000)
-
-### Production Deployment
-
-- **Frontend**: Deploy to Vercel (SPA routing via vercel.json)
-- **Backend**: Deploy to Railway or Fly.io
-
-See [DOCKER_SETUP.md](DOCKER_SETUP.md) for detailed Docker setup instructions.
-
-## API Endpoints
-
-### Authentication
-- `POST /auth/register` - Register a new user
-- `POST /auth/login` - Login and receive JWT token
-- `GET /auth/me` - Get current user info
-
-### Applications
-- `GET /applications` - List all applications
-- `POST /applications` - Create new application
-- `GET /applications/{app_id}` - Get application details
-- `DELETE /applications/{app_id}` - Delete application
-
-### Metrics
-- `GET /metrics/{app_id}` - Get latest metrics
-- `GET /metrics/{app_id}/realtime` - Stream real-time metrics (SSE)
-
-## Key Components
-
-### Dashboard Component
-Displays registered applications with options to:
-- View application details
-- Delete applications (with confirmation)
-- Toggle between dark and light themes
-
-### Metrics Component
-Visualizes real-time metrics with:
-- 4 interactive line charts (CPU, Memory, Network, Disk)
-- 2-column responsive grid layout
-- Real-time updates via EventSource
-- Dark theme support
-
-### Authentication Flow
-- Users register with email and password
-- Credentials validated, JWT token generated
-- Token stored in localStorage and sent with requests
-- Protected endpoints verify token via dependency injection
-
-## Environment Variables
-
-### Backend
-```
-DATABASE_URL=postgresql://user:password@localhost/observability_db
-SECRET_KEY=your-secret-key-here
-AWS_ACCESS_KEY_ID=your-aws-key
-AWS_SECRET_ACCESS_KEY=your-aws-secret
-AWS_REGION=us-east-1
-```
-
-### Frontend
-```
-VITE_API_URL=http://localhost:8000
-```
-
-## Testing
-
-### Backend Tests
-```bash
-pytest
-pytest test/test_auth.py
-```
-
-### Frontend Tests
-```bash
-npm run test
-```
-
-## Future Plans & Enhancements
-
-- [ ] Multi-stage Docker builds for optimized production images
-- [ ] Gunicorn + Uvicorn for production-grade ASGI serving
-- [ ] HttpOnly cookies for token storage (security improvement)
-- [ ] Advanced metrics analytics and alerts
-- [ ] User role management and permissions
-- [ ] Comprehensive test coverage (backend & frontend)
-- [ ] CI/CD pipeline setup (GitHub Actions, Vercel, Railway)
-- [ ] OAuth2/Social login support
-- [ ] Multi-cloud provider support (GCP, Azure)
-- [ ] Customizable dashboards and widgets
-- [ ] Notification system (email, Slack, etc.)
-- [ ] Improved error handling and logging
-- [ ] Accessibility improvements
-- [ ] Internationalization (i18n)
-
----
-
-# 🚀 Remote Build & Deployment Script (Cloud VM / Azure VM)
-
-This project includes a local deployment automation script that allows you to build and deploy the application on a remote cloud VM (such as an Azure VM) directly from your local machine.
-
-### What the Script Does
-
-- Connects to a remote VM using SSH
-- Validates `.pem` certificate permissions
-- Verifies Git access
-- Clones repository (if missing)
-- Pulls latest changes
-- Installs Docker (if missing)
-- Stops running container (if exists)
-- Rebuilds Docker image
-- Restarts container
-- Streams live build logs
-- Automatically closes SSH connection even if the build fails
-
----
-
-## 📂 Certificate Setup
-
-Place your SSH private key inside:
-
-```
-script/cert/
-```
-
-Example:
-
-```
-script/
- ├── cert/
- │   └── observability_key.pem
+# Backend API runs on port 8000
+# Note: Include PostgreSQL and frontend services for full stack
 ```
 
 ---
 
-## ⚙️ Required `.env` Variables for Build Script
+## 📦 Project Structure
 
 ```
-HOST_NAME=YOU_HOST_NAME
-HOST_IP=HOST_IP
-CERT_NAME=file.pem
-SSH_PORT=22
-CONTAINER_NAME=CINTAINER_NAME
-REPO_URL=REPO_URL
-REPO_PATH=PROJECT_PATH_IN_VM
-GIT_BRANCH=DESIRED_BRANCH
-YAML_NAME=cmd.yaml
+service-observability-platform/
+├── main.py                          # FastAPI application entry point
+├── requirements.txt                 # Python dependencies
+├── Dockerfile                       # Backend container image
+├── docker-compose.yaml              # Multi-container orchestration
+│
+├── auth/                            # Authentication & authorization
+│   ├── route.py                     # Auth endpoints (register, login, me)
+│   ├── security.py                  # JWT creation, password hashing
+│   └── dependency.py                # Request dependencies (get_current_user)
+│
+├── applications/                    # Resource management
+│   ├── route.py                     # CRUD operations for cloud resources
+│   ├── repo.py                      # Data access with credential encryption
+│   └── schema.py                    # Pydantic request/response models
+│
+├── metrics/                         # CloudWatch integration
+│   ├── route.py                     # SSE streaming endpoint
+│   ├── aws.py                       # EC2 metric collector
+│   ├── aws_S3.py                    # S3 metric collector
+│   ├── aws_labda.py                 # Lambda metric collector
+│   └── aws_fetcher.py              # Generic CloudWatch API wrapper
+│
+├── realtime/                        # Background processing
+│   └── aws_poller.py               # 30s polling loop for active apps
+│
+├── config/                          # Configuration
+│   └── metrics.yaml                # Metric definitions by namespace
+│
+├── helper/                          # Utilities
+│   ├── encryption.py               # Fernet encrypt/decrypt helpers
+│   └── yamlLoader.py              # Metrics configuration loader
+│
+└── frontend/                        # React SPA
+    ├── src/
+    │   ├── App.jsx                  # Main application with routing
+    │   ├── services/api.js         # API client (fetch-based)
+    │   ├── components/             # UI components
+    │   │   ├── Dashboard.jsx       # Application cards grid
+    │   │   ├── Metrics.jsx         # Real-time chart visualization
+    │   │   └── AddApplication.jsx  # Resource registration form
+    │   └── utils/                  # Constants and helpers
+    └── vite.config.js              # Dev server with API proxy
 ```
 
 ---
 
-## 📜 YAML Deployment Configuration
+## 🔧 Configuration
 
-Deployment commands are defined in:
+### Environment Variables
 
-```
-script/cmd/commands.yaml
-```
+| Variable | Purpose | Required |
+|----------|---------|----------|
+| `DATA_BASE_URL` | PostgreSQL connection string | ✅ Yes |
+| `SECRET_KEY` | JWT signing secret (HS256) | ✅ Yes |
+| `ENCRYPTION_KEY` | Fernet key for AWS credential encryption | Optional |
+| `AWS_ACCESS_KEY_ID` | Global AWS credentials (fallback) | Per-app or env |
+| `AWS_SECRET_ACCESS_KEY` | Global AWS credentials (fallback) | Per-app or env |
 
-You may modify this file as required to customize deployment steps.
+### Metrics Configuration
 
-Example:
+Metrics are defined in `config/metrics.yaml` by AWS namespace:
 
 ```yaml
-tasks:
-  - name: check_git_login
-    command: "git ls-remote {repo_url}"
-
-  - name: check_repo_cloned
-    command: "test -d {repo_path}"
-
-  - name: clone_repo
-    command: "git clone -b {branch} {repo_url} {repo_path}"
-
-  - name: pull_latest
-    command: "cd {repo_path} && git pull origin {branch}"
-
-  - name: check_docker
-    command: "docker --version"
-
-  - name: install_docker
-    command: "curl -fsSL https://get.docker.com | sh"
-
-  - name: check_container
-    command: "docker ps -q -f name={image_name}"
-
-  - name: docker_down
-    command: "cd {repo_path} && docker-compose down"
-
-  - name: docker_build
-    command: "cd {repo_path} && docker-compose up -d --build"
+ec2:
+  - metric: CPUUtilization
+    statistic: Average
+  - metric: NetworkIn
+    statistic: Sum
+    
+s3:
+  - metric: BucketSizeBytes
+    statistic: Maximum
+    
+lambda:
+  - metric: Invocations
+    statistic: Sum
 ```
 
 ---
 
-## ▶️ Running the Build Script
+## 🎯 Features
 
-From your local machine:
+### Authentication & Security
+- User registration with email/password
+- JWT-based authentication (HS256)
+- Password hashing with Argon2id
+- Forgot/reset password flow with 30-minute token expiry
+- Encrypted AWS credential storage (Fernet symmetric encryption)
 
+### Cloud Resource Monitoring
+
+**EC2 Instances**
+- CPU Utilization (Average, Maximum)
+- Network In/Out traffic
+- Status Check Failed (System)
+- CPUCreditBalance
+- CWAgent memory and disk usage metrics
+
+**S3 Buckets**
+- Bucket Size in bytes
+- Number of Objects
+
+**Lambda Functions**
+- Invocations count
+- Errors count
+- Throttles count
+- Average Duration
+- Maximum Duration
+- Concurrent Executions
+
+### Real-time Data Streaming
+- **Collection**: Background poller queries CloudWatch every 30 seconds
+- **Storage**: Metrics stored in PostgreSQL with rolling history
+- **Streaming**: Server-Sent Events (SSE) push updates to frontend every 5 seconds
+- **Visualization**: Recharts LineChart with 20-point rolling window
+
+### User Experience
+- Responsive design with mobile-friendly layouts
+- Dark/light theme toggle
+- Per-user application isolation
+- Soft-delete with cascading relationships
+
+---
+
+## 🌐 Deployment Options
+
+### Fly.io (Backend)
 ```bash
-python build.py
+flyctl launch
+flyctl deploy
+# Configured in fly.toml (512MB VM, iad region)
 ```
 
-This script can be used when the code is deployed on a cloud VM such as an Azure VM or any SSH-accessible Linux server.
+### Vercel (Frontend)
+- Automatic deployment from git push
+- SPA routing configured via `vercel.json`
+- Environment variables set in Vercel dashboard
 
-It enables automated remote builds without manually logging into the VM.
+### Railway (Backend)
+- Deploy via Procfile: `web: uvicorn main:app --host 0.0.0.0 --port $PORT`
+- Add PostgreSQL add-on for database
+
+### Remote VM Deployment
+```bash
+python script/build.py
+# SSH-based remote Docker build and deploy
+```
+
+---
+
+## 🧪 Development
+
+### Running Tests
+```bash
+pytest tests/
+```
+
+*Note: Test suite is currently being developed. No actual tests exist yet despite the existing test directory structure.*
+
+### API Documentation
+Once the backend is running, interactive API documentation is available at:
+- **Swagger UI**: http://localhost:8000/docs
+- **ReDoc**: http://localhost:8000/redoc
+
+---
+
+## 🔮 Roadmap
+
+- [ ] Comprehensive test suite (unit + integration)
+- [ ] Additional AWS service support (RDS, DynamoDB, ECS)
+- [ ] Alerting and notification system
+- [ ] Historical data export (CSV, JSON)
+- [ ] Multi-cloud support (GCP, Azure)
+- [ ] Kubernetes deployment manifests
+- [ ] GraphQL API layer
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+
